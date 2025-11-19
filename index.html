@@ -26,11 +26,13 @@
     .container {
         text-align: center;
         padding: 20px;
+        z-index: 10;
     }
 
     h1 {
         color: #ff6b9d;
         margin-bottom: 20px;
+        font-size: 2rem;
     }
 
     .desafio {
@@ -47,10 +49,12 @@
         border-radius: 15px;
         font-weight: bold;
         box-shadow: 0 4px 8px rgba(0,0,0,.2);
+        cursor: pointer;
     }
 
+    /* 🔥 Botão NÃO (não mexi em nada) */
     #nao {
-        position: fixed !important;  /* 🔥 AQUI resolve tudo */
+        position: fixed !important;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -64,25 +68,45 @@
         transition: top .2s, left .2s;
         z-index: 9999;
     }
+
+    /* Mensagem final estilizada */
+    #mensagem-final {
+        position: absolute;
+        text-align: center;
+        color: #ffb6c1;
+        font-size: 2rem;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: 0.8s ease;
+        z-index: 20;
+        pointer-events: none;
+    }
 </style>
 
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="conteudo">
     <h1>Lê, você sente algo por mim?</h1>
     <p class="desafio">Eu te desafio a dizer não 😊</p>
 
     <button id="sim">Sim 💖</button>
 </div>
 
-<button id="nao">Não</button>  <!-- botão fora do container -->
+<button id="nao">Não</button>
+
+<h2 id="mensagem-final">Sabia! Eu também sinto algo por você ❤️</h2>
+
+<!-- Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
 <script>
 const nao = document.getElementById("nao");
 const sim = document.getElementById("sim");
+const mensagemFinal = document.getElementById("mensagem-final");
+const conteudo = document.getElementById("conteudo");
 
-// Função para mover o botão sempre dentro da tela do celular
+// --- função de mover o botão NÃO (não alterei nada!)
 function moveButton() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -100,27 +124,41 @@ function moveButton() {
     nao.style.top = randomY + "px";
 }
 
-// Desktop: quando passa o mouse
 nao.addEventListener("mouseover", moveButton);
+nao.addEventListener("touchstart", e => { e.preventDefault(); moveButton(); });
+nao.addEventListener("click", e => { e.preventDefault(); moveButton(); });
 
-// Celular: quando toca
-nao.addEventListener("touchstart", e => {
-    e.preventDefault();
-    moveButton();
-});
-
-// Tentativa de clique
-nao.addEventListener("click", e => {
-    e.preventDefault();
-    moveButton();
-});
-
-// Botão SIM
+// --- Botão SIM com animação linda
 sim.addEventListener("click", () => {
-    alert("Sabia! Eu também sinto algo por você, te amo nega ❤️");
+
+    // Remove conteúdo
+    conteudo.style.opacity = "0";
+
+    // Confete explosão inicial
+    confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 }
+    });
+
+    // Animação da mensagem final
+    setTimeout(() => {
+        mensagemFinal.style.opacity = "1";
+        mensagemFinal.style.transform = "scale(1)";
+    }, 300);
+
+    // Confetes contínuos com corações
+    setInterval(() => {
+        confetti({
+            particleCount: 10,
+            scalar: 1.2,
+            shapes: ["heart"],
+            colors: ["#ff4a91", "#ff77b7", "#ffc1d9"],
+            origin: { x: Math.random(), y: Math.random() * 0.3 }
+        });
+    }, 800);
 });
 </script>
 
 </body>
 </html>
-
